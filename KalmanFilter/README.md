@@ -92,3 +92,15 @@ $$
 
 Then we update the state :
 
+$$
+X_k = \widehat{X_k} + K_k * (Z_k - H * \widehat{X_k})
+$$
+
+where $$Z_k$$ is the GPS measure and $$(Z_k - H * \widehat{X_k})$$ is the measure error.
+
+We also need to update the covariance error : 
+
+$$
+P_k = (I - K_k * H) * P_k
+$$
+
