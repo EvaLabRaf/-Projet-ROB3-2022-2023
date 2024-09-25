@@ -103,4 +103,3 @@ We also need to update the covariance error :
 $$
 P_k = (I - K_k * H) * P_k
 $$
-
