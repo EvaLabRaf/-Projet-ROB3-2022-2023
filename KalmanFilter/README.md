@@ -35,7 +35,9 @@ So we can use the equation :
 $$
 X_{k+1} = F * X_k + u
 $$
+
 With 
+
 $$
 F = 
 \left(\begin{array}{cc} 
@@ -73,3 +75,22 @@ H =
 0 && 1 && 0 && 0\\
 \end{array}\right)
 $$
+
+We can now use the Kalman Filter equation seen in class which are : 
+
+$$
+\widehat{X_{k+1}} = F * X_k
+$$
+
+$$
+P_{k+1} = F * P_k * F^\intercal + Q
+$$
+
+Ones we had a GPS data, we can estimate the previous one with the Kalman gain : 
+
+$$
+K_k = P_k * H^\intercal * (H * P_k * H^\intercal + R)^{-1}
+$$
+
+Then we update the state :
+
