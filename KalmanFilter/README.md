@@ -4,4 +4,4 @@ For the sensor fusion project we choose to implement the Kalman filter directly 
 
 <br />
 
-we are going to use it 
+we are going to apply it on the GPS and or laser 
