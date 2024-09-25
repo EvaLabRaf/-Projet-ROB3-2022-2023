@@ -73,5 +73,3 @@ H =
 0 && 1 && 0 && 0\\
 \end{array}\right)
 $$
-
-gg
