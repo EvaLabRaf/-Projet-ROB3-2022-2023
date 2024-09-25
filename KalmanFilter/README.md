@@ -4,9 +4,7 @@ For the sensor fusion project we choose to implement the Kalman filter directly 
 
 <br />
 
-we are going to apply it on the GPS and or laser 
-
-The goal of the project is to reduce the noise on the GPS data to have a better precision of the position.
+We are going to apply a Kalman filter to GPS data, we can expect to achieve more accurate and stable position estimates by smoothing out the noise and errors inherent in GPS measurements. The Kalman filter works by predicting the future state (position, velocity) of the system based on previous data and then correcting these predictions using the new, noisy GPS measurements. This results in a refined estimation that is closer to the true position. The Kalman filter is especially useful for GPS because it compensates for the low update frequency, temporary signal losses, and inaccuracies caused by environmental factors or low quality sensor, providing continuous and reliable localization.
 
 We will combine the GPS data with the robot movement data.
 
