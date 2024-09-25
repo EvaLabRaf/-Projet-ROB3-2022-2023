@@ -4,10 +4,7 @@ For the sensor fusion project we choose to implement the Kalman filter directly 
 
 <br />
 
-<<<<<<< Updated upstream
 we are going to apply it on the GPS and or laser 
-=======
-we are going to use it 
 
 The goal of the project is to reduce the noise on the GPS data to have a better precision of the position.
 
@@ -20,4 +17,3 @@ We need to define a state vector which have to be composed by the positions of t
 The matrix can be wrote like : 
 
 
->>>>>>> Stashed changes
