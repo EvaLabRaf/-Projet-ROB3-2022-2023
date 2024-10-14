@@ -1,5 +1,7 @@
 #include "TinyGPS++.h"
 #include "SoftwareSerial.h"
+#include <Wire.h>
+#include "MPU6050_Angle.h"
 
 // --- GPS Definitions ---
 static const int RXPin = 2, TXPin = 3;
@@ -7,6 +9,8 @@ static const uint32_t GPSBaud = 9600;
 
 TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);
+MPU6050_Angle angleSensor;
+
 unsigned long previousMillis = 0;
 
 // --- Kalman Filter Definitions ---
@@ -37,10 +41,9 @@ float F[2][2] = {
     {0, 0}
 }; // State transition matrix
 
-float 
-
 void setup() {
     Serial.begin(9600);
+    angleSensor.begin();
     ss.begin(GPSBaud);
     Serial.println(F("Latitude   Longitude"));
     Serial.println(F("(deg)      (deg)    "));
@@ -48,6 +51,8 @@ void setup() {
 }
 
 void loop() {
+    angleSensor.readRowAcc();
+    gps.location.lat()
 
 }
 
