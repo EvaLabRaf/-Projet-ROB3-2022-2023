@@ -10,32 +10,20 @@ SoftwareSerial ss(RXPin, TXPin);
 unsigned long previousMillis = 0;
 
 // --- Kalman Filter Definitions ---
-float X[4] = {0, 0, 0, 0}; // State [x, y, vx, vy]
-float P[4][4] = {
-    {1, 0, 0, 0},
-    {0, 1, 0, 0},
-    {0, 0, 1, 0},
-    {0, 0, 0, 1}
+float X[2] = {0, 0}; // State [x, y, vx, vy]
+float P[2][2] = {
+    {10^9, 0},
+    {0, 10^9}
 }; // Estimate error covariance
-float Q[4][4] = {
-    {0.01, 0, 0, 0},
-    {0, 0.01, 0, 0},
-    {0, 0, 0.1, 0},
-    {0, 0, 0, 0.1}
+float Q[2][2] = {
+    {0.1, 0},
+    {0, 0.1}
 }; // Process noise covariance
-float R[2][2] = {
-    {0.5, 0},
-    {0, 0.5}
-}; // Measurement noise covariance
-float H[2][4] = {
-    {1, 0, 0, 0},
-    {0, 1, 0, 0}
-}; // Measurement matrix
-float F[4][4] = {
-    {1, 0, 1, 0},
-    {0, 1, 0, 1},
-    {0, 0, 1, 0},
-    {0, 0, 0, 1}
+float R = 4; // Measurement noise covariance
+float H[2] = {1,0}; // Measurement matrix
+float F[2][2] = {
+    {0,1},
+    {0,0},
 }; // State transition matrix
 
 void setup() {
@@ -68,27 +56,27 @@ void loop() {
         F[1][3] = dt;
 
         // --- Prediction Step ---
-        float X_pred[4] = {0};
-        for (int i = 0; i < 4; ++i) {
-            for (int j = 0; j < 4; ++j) {
+        float X_pred[2] = {0};
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
                 X_pred[i] += F[i][j] * X[j];
             }
         }
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 2; ++i) {
             X[i] = X_pred[i];
         }
 
-        float P_pred[4][4] = {0};
-        for (int i = 0; i < 4; ++i) {
-            for (int j = 0; j < 4; ++j) {
-                for (int k = 0; k < 4; ++k) {
+        float P_pred[2][2] = {0};
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
+                for (int k = 0; k < 2; ++k) {
                     P_pred[i][j] += F[i][k] * P[k][j];
                 }
             }
             P_pred[i][i] += Q[i][i];
         }
-        for (int i = 0; i < 4; ++i) {
-            for (int j = 0; j < 4; ++j) {
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
                 P[i][j] = P_pred[i][j];
             }
         }
@@ -98,10 +86,10 @@ void loop() {
         float S[2][2] = {0};
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
-                for (int k = 0; k < 4; ++k) {
-                    S[i][j] += H[i][k] * P[k][j];
+                for (int k = 0; k < 2; ++k) {
+                    S[i][j] += H[i] * P[k][j];
                 }
-                S[i][j] += R[i][j];
+                S[i][j] += R;
             }
         }
 
@@ -112,8 +100,8 @@ void loop() {
             {-S[1][0] / det, S[0][0] / det}
         };
 
-        float K[4][2] = {0};
-        for (int i = 0; i < 4; ++i) {
+        float K[2][2] = {0};
+        for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
                 for (int k = 0; k < 2; ++k) {
                     K[i][j] += P[i][k] * S_inv[k][j];
@@ -124,43 +112,41 @@ void loop() {
         // Update state
         float y[2] = {0};
         for (int i = 0; i < 2; ++i) {
-            for (int j = 0; j < 4; ++j) {
-                y[i] += H[i][j] * X[j];
+            for (int j = 0; j < 2; ++j) {
+                y[i] += H[i] * X[j];
             }
             y[i] = Z[i] - y[i];
         }
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
                 X[i] += K[i][j] * y[j];
             }
         }
 
         // Update covariance
-        float I[4][4] = {
-            {1, 0, 0, 0},
-            {0, 1, 0, 0},
-            {0, 0, 1, 0},
-            {0, 0, 0, 1}
+        float I[2][2] = {
+            {1, 0},
+            {0, 1}
         };
-        float KH[4][4] = {0};
-        for (int i = 0; i < 4; ++i) {
-            for (int j = 0; j < 4; ++j) {
+        float KH[2][2] = {0};
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
                 for (int k = 0; k < 2; ++k) {
-                    KH[i][j] += K[i][k] * H[k][j];
+                    KH[i][j] += K[i][k] * H[k];
                 }
                 KH[i][j] = I[i][j] - KH[i][j];
             }
         }
-        float P_new[4][4] = {0};
-        for (int i = 0; i < 4; ++i) {
-            for (int j = 0; j < 4; ++j) {
-                for (int k = 0; k < 4; ++k) {
+        float P_new[2][2] = {0};
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
+                for (int k = 0; k < 2; ++k) {
                     P_new[i][j] += KH[i][k] * P[k][j];
                 }
             }
         }
-        for (int i = 0; i < 4; ++i) {
-            for (int j = 0; j < 4; ++j) {
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
                 P[i][j] = P_new[i][j];
             }
         }
